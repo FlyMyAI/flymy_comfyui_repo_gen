@@ -1,0 +1,8 @@
+import dataclasses
+
+
+@dataclasses.dataclass
+class {{ config.model_name }}Input:
+    {% for field in config.repo_settings.fields %}
+    {{ field.name }}: {{ field.python_type}}
+    {% endfor %}
