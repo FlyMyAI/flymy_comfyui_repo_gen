@@ -132,7 +132,7 @@ dmypy.json
 
 # Pycharm stuff
 .idea/
-
+*/*/test_output
 #configs
 media
 dump.rdb

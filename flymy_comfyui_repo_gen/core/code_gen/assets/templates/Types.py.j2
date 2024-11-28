@@ -1,0 +1,23 @@
+import dataclasses
+import copy
+
+
+@dataclasses.dataclass
+class {{ config.repo_name }}Input:
+    {% for field in config.repo_settings.fields %}
+    {{ field.python_name }}: {{ field.python_type.__name__ }}
+    {% endfor %}
+
+    {% for node in config.nodes %}
+    def to_{{ node.name }}(self) -> dict:
+        return {
+            {% for node_field in node.fields %}"{{ node_field.comfy_name }}": getattr(self, "{{ node_field.python_name }}"),{% endfor %}
+        }
+    {% endfor %}
+
+    def export_to_workflow(self, workflow: dict):
+        copied_wf = copy.deepcopy(workflow)
+        for k in workflow.keys():
+            if method := getattr(self.__class__, f"to_{k}", None):
+                copied_wf[k]["inputs"].update(method(self))
+        return copied_wf

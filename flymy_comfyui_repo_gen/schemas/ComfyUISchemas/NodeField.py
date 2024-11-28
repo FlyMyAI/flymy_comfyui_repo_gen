@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 
 class NodeField(BaseModel):
     python_type: type
-    name: str
+    python_name: str
+    comfy_name: str
+    node_name: str
 
     default_value: Any = Field(default=None)
