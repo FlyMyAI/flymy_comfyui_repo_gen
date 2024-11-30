@@ -1,16 +1,17 @@
 import hashlib
-from typing import Any
+from typing import Any, Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AfterValidator
 
+from flymy_comfyui_repo_gen.core.utils import replace_symbols_with_underscore
 from flymy_comfyui_repo_gen.schemas.remap_fielld_set import COMFY_IMAGE_INPUT_MAPS
 
 
 class NodeField(BaseModel):
     python_type: type
-    python_name: str
-    comfy_name: str
-    node_name: str
+    python_name: Annotated[str, AfterValidator(replace_symbols_with_underscore)]
+    comfy_name: Annotated[str, AfterValidator(replace_symbols_with_underscore)]
+    node_name: Annotated[str, AfterValidator(replace_symbols_with_underscore)]
 
     default_value: Any = Field(default=None)
 

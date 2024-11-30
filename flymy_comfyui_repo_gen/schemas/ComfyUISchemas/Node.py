@@ -1,13 +1,16 @@
-from pydantic import BaseModel
+from typing import Annotated
 
+from pydantic import BaseModel, AfterValidator
+
+from flymy_comfyui_repo_gen.core.utils import replace_symbols_with_underscore
 from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.NodeField import NodeField
 from flymy_comfyui_repo_gen.schemas.remap_fielld_set import COMFY_IMAGE_INPUT_MAPS
 
 
 class NodeSchema(BaseModel):
     fields: list[NodeField]
-    name: str
-    node_type: str
+    name: Annotated[str, AfterValidator(replace_symbols_with_underscore)]
+    node_type: Annotated[str, AfterValidator(replace_symbols_with_underscore)]
 
     def is_image_input(self):
         return self.node_type in COMFY_IMAGE_INPUT_MAPS

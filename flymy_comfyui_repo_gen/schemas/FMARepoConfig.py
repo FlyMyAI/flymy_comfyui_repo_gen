@@ -21,6 +21,13 @@ class FMARepoConfig(BaseModel):
         if self._fields:
             return self._fields
         fields = []
+
+        def find_match(node_name):
+            matched = FlyMyComfyUINodeSchema.node_id_regex().match(node_name)
+            if not matched:
+                raise ValueError(f"id retrieval failed for {node_name}")
+            return matched.group(1)
+
         for field_p in self.input_field_paths:  # 86.inputs.text_field
             parts = field_p.split(".")
             search_id = parts[0]
@@ -29,8 +36,7 @@ class FMARepoConfig(BaseModel):
             try:
                 parent_node_name: str = next(filter(
                     lambda node_name:
-                    FlyMyComfyUINodeSchema.node_id_regex().match(node_name).group(1) == search_id,
-
+                    find_match(node_name) == search_id,
                     self.edited_comfy_workflow.keys()
                 ))
                 parent_node = self.edited_comfy_workflow[parent_node_name]

@@ -14,6 +14,14 @@ def normalize_u(string):
     return string
 
 
+def replace_symbols_with_underscore(text):
+    # Regex pattern: match any character that is not a letter or digit
+    pattern = r'[^a-zA-Z0-9]'
+    # Replace all matched characters with an underscore
+    result = re.sub(pattern, '_', text)
+    return result
+
+
 def to_pascal_case(string: str) -> str:
     components = string.split('_')
     return ''.join(x.title() for x in components)

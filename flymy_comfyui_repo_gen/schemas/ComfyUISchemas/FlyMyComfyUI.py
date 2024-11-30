@@ -3,7 +3,7 @@ import re
 from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.BaseNode import BaseNode
 from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.ComfyNode import ComfyNodeSchema
 
-_NODE_ID_REGEX = re.compile(r"\w+_(\w+)")
+_NODE_ID_REGEX = re.compile(r".*_(\w+)")
 
 
 class FlyMyComfyUINodeSchema(BaseNode):
