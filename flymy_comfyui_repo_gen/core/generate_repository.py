@@ -7,6 +7,7 @@ from pydantic import RootModel
 
 from flymy_comfyui_repo_gen.core.code_gen.Infer.InferGenerator import InferGenerator
 from flymy_comfyui_repo_gen.core.code_gen.Model.ModelGenerator import ModelGenerator
+from flymy_comfyui_repo_gen.core.code_gen.Pyproject.PyprojectGenerator import PyprojectGenerator
 from flymy_comfyui_repo_gen.core.code_gen.Types.TypesGenerator import TypesGenerator
 from flymy_comfyui_repo_gen.core.workflow_edit import WorkflowEditor
 from flymy_comfyui_repo_gen.schemas.RepoGeneratorConfig import RepoGeneratorConfig
@@ -51,9 +52,15 @@ def generate_repository(
                 text = text_or_future.result()
             awaited[file_p] = text
         result_repo = ResultRepo(
-            files=awaited,
+            src_files=awaited,
             out_dir=output_dir,
-            repo_name=repo_name
+            repo_name=repo_name,
+            root_files={
+                "pyproject.toml": PyprojectGenerator(
+                    repo_config=fma_api,
+                    repo_name=repo_name
+                ).generate()
+            }
         )
         result_repo.save()
         result_repo.lint()

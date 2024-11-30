@@ -139,3 +139,4 @@ dump.rdb
 poetry.lock
 src/celerybeat-schedule.db
 static/
+playground/

@@ -10,7 +10,9 @@ from flymy_comfyui_repo_gen.core.utils import normalize_u
 
 
 class ResultRepo(BaseModel):
-    files: dict[str, str]
+    src_files: dict[str, str]
+    root_files: dict[str, str]
+
     out_dir: pathlib.Path
     repo_name: str
 
@@ -20,8 +22,16 @@ class ResultRepo(BaseModel):
 
     def save(self):
         os.makedirs(str(self.src_dir / "assets"), exist_ok=True)
-        for file_p, text in self.files.items():
+        for file_p, text in self.src_files.items():
             file_path = (self.src_dir / file_p)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            if file_path.exists():
+                os.chmod(file_path, mode=0o664)
+            file_path.write_text(text)
+            os.chmod(file_path, mode=0o664)
+
+        for file_p, text in self.root_files.items():
+            file_path = (self.out_dir / file_p)
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             if file_path.exists():
                 os.chmod(file_path, mode=0o664)

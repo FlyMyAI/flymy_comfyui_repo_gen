@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "{{ config.repo_name }}"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.26.4"
+flymyai-comfy-engine = {git = "https://{insert_token_here}@github.com/FlyMyAI/flymy_comfyui", rev = "{choose_version}"}
+opencv-python = "^4.10.0.84"
+setuptools = "^75.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
