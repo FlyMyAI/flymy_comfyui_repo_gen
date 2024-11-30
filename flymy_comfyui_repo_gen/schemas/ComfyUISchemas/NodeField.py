@@ -23,7 +23,7 @@ class NodeField(BaseModel):
     @property
     def infer_value(self):
         if self.is_transformed_image_input():
-            return f'load_image("test_{self.comfy_name}.jpg")'
+            return f'load_image("test_{self.node_name}_{self.comfy_name}.jpg")'
         return repr(self.default_value)
 
     @property

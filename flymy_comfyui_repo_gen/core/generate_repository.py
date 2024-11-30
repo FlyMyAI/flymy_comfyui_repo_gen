@@ -45,6 +45,7 @@ def generate_repository(
                 repo_name=repo_name
             ).generate
         )
+        tasks["__init__.py"] = ""
         awaited = {}
         for file_p, text_or_future in tasks.items():
             text = text_or_future
