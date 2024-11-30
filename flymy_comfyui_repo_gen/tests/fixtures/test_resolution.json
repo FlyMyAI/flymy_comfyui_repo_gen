@@ -83,11 +83,29 @@
                   0
               ]
           }
+      },
+      "14": {
+        "inputs": {
+          "image": "00000.jpg",
+          "upload": "image"
+        },
+        "class_type": "LoadImage"
       }
   },
   "input_field_paths": [
     "5.inputs.height",
     "5.inputs.width",
-    "6.inputs.text"
+    "6.inputs.text",
+      "14.inputs.image"
+  ],
+  "comfy_repositories": [
+      {
+          "token": "some_token",
+          "url": "https://github.com/XLabs-AI/x-flux-comfyui.git"
+      },
+      {
+          "token": "some_token2",
+          "manager_capable_name": "ComfyUI-Florence2"
+      }
   ]
 }

@@ -1,9 +1,12 @@
 from pydantic import BaseModel, computed_field, PrivateAttr
 
 from flymy_comfyui_repo_gen.core.exceptions import FieldNotFoundError
+from flymy_comfyui_repo_gen.schemas.ComfyRepository import ComfyRepositorySchema
 from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.FlyMyComfyUI import FlyMyComfyUINodeSchema
+from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.Node import NodeSchema
 from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.NodeField import NodeField
 from flymy_comfyui_repo_gen.schemas.RepoGeneratorConfig import RepoGeneratorConfig
+from flymy_comfyui_repo_gen.schemas.remap_fielld_set import OUTPUT_NODE_CLASSES_MAP
 
 
 class FMARepoConfig(BaseModel):
@@ -42,4 +45,22 @@ class FMARepoConfig(BaseModel):
                 raise FieldNotFoundError(f"Field {field_p} not found") from e
         self._fields = fields
         return self._fields
+
+    @property
+    def comfy_repositories(self):
+        return self.initial_config.comfy_repositories
+
+    @property
+    def output_nodes(self):
+        return [
+            NodeSchema(
+                fields=[],  # it is not used
+                name=name,
+                node_type=args.class_type
+            )
+            for name, args in filter(
+                lambda x: x[1].class_type in OUTPUT_NODE_CLASSES_MAP,
+                self.edited_comfy_workflow.items()
+            )
+        ]
 

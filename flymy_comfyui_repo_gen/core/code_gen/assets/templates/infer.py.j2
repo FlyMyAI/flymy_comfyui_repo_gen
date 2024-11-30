@@ -1,0 +1,38 @@
+import pathlib
+import base64
+import asyncio
+import time
+
+import numpy as np
+import cv2
+
+from .model import {{ config.repo_name }}Model
+from .Types import {{ config.repo_name }}Input
+
+
+def load_image(path):
+    base_path = pathlib.Path(__file__).parent / "assets"
+    read_image = np.array(cv2.imread(str(base_path / path)), dtype=np.uint8)
+    if read_image.shape[-1] == 4:
+        read_image = read_image[:, :, :3]
+    image = np.transpose(np.ascontiguousarray(np.array([read_image])), (0, 3, 1, 2))
+    encoded = base64.b64encode(np.ascontiguousarray(image))
+    return encoded
+
+
+class {{ config.repo_name }}SimpleModel({{ config.repo_name }}Model):
+    def build_prompt(self, **__):
+        return {{ config.repo_name }}Input(
+            {% for field in config.repo_settings.fields %}
+            {{ field.python_name }}={{ field.infer_value }},
+            {% endfor %}
+        )
+
+
+model = {{ config.repo_name }}SimpleModel()
+model.initialize([])
+results = asyncio.run(model.exec_comfy_pipeline({}))
+print(results)
+time_start = time.perf_counter()
+asyncio.run(model.exec_comfy_pipeline({}))
+print("TIME: ", time.perf_counter() - time_start)

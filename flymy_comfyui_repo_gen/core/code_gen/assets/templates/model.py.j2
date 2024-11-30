@@ -1,0 +1,108 @@
+import json
+import pathlib
+import threading
+import time
+
+import numpy as np
+
+from flymyai_comfy_engine.ResultCollection.CollectionSchema import CollectionSchema
+{% for schema_analog in config.schema_analog_fields %}
+from flymyai_comfy_engine.ResultCollection.{{ schema_analog }} import {{ schema_analog }}
+{% endfor %}
+from flymyai_comfy_engine.triton_model import TritonComfyCPN
+from flymyai_comfy_engine.installer import install_pipeline_from_git, install_pipeline, setup
+
+from .Types import {{ config.repo_name }}Input
+
+
+class {{ config.repo_name }}Model(TritonComfyCPN):
+    collect_result_schema = CollectionSchema(
+        collection_schema={
+            {% for schema_analog, node in config.output_schema -%}
+            "{{ node.name }}": (
+                {{ schema_analog }},
+                # accepts 1 arg (comfy node result), returns dict
+                # the output must be {{ schema_analog }}.Schema compatible
+                {{ schema_analog }}.extract_{{ node.node_type }}
+            ),
+            {% endfor %}
+        }
+    )
+
+    def on_comfy_server_ready(self):
+        """
+        This allows you to perform post-startup logic,
+        ComfyUI-Manager can be initialized now
+        :return: None
+        """
+        setup()  # initialize ComfyUI-Manager or git puller
+        {% for repository in config.repo_settings.comfy_repositories %}
+        {% if repository.manager_capable_name %}
+        install_pipeline("{{ repository.manager_capable_name }}")
+        {% else %}
+        install_pipeline_from_git("{{ repository.authorized_git_url }}")
+        {% endif %}
+        {% endfor %}
+
+    def initialize(self, *_, **__):
+        setup()
+        super().initialize(*_, **__)
+        self.__warmed_up = threading.Event()
+        daemon_thread = threading.Thread(target=self.__warmup_log_daemon, daemon=True)
+        daemon_thread.start()
+        try:
+            self.warm_up()
+        finally:
+            self.__warmed_up.set()
+
+    def __warmup_log_daemon(self):
+        """
+        Custom logging function for warming up - use it to
+        log events aside of warming up
+        :return:
+        """
+        while not self.__warmed_up.is_set():
+            time.sleep(3)
+            print("warming up...", flush=True)
+
+
+    def warm_up(self) -> None:
+        ...
+
+    def make_default_workflow(self):
+        """
+        Default workflow definition
+        :return:
+        """
+        if not hasattr(self, "__default_workflow"):
+            self.__default_workflow = json.loads(
+                (
+                        pathlib.Path(__file__).parent / "assets" / "workflow_api.json"
+                ).read_bytes()
+            )
+        return self.__default_workflow
+
+    def build_prompt(self, **prompt_kwargs) -> {{ config.repo_name }}Input:
+        """
+        :param prompt_kwargs: {"request": triton request} / something defined in infer.py
+        :return: {{ config.repo_name }}Input
+        """
+        raise NotImplemented
+
+    async def exec_comfy_pipeline(self, build_prompt_kwargs: dict) -> dict[str, np.ndarray]:
+        """
+        Default engine api calls to launch a workflow
+        :param build_prompt_kwargs: normally - triton request
+        :return: something to validate with self.collect_result_schema
+        """
+        base_workflow = self.make_default_workflow()
+        prompt = self.build_prompt(**build_prompt_kwargs)
+        full_workflow = prompt.export_to_workflow(base_workflow)
+        client_id = await self.comfy_new_request(dict(prompt=full_workflow))
+        comfy_results = []
+        async for r in self.await_events(client_id):
+            comfy_results.append(r)
+        numpy_results = self.collect_results_to_numpy(
+            comfy_results
+        )
+        return numpy_results

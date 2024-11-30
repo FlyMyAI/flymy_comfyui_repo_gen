@@ -5,6 +5,8 @@ from typing import Annotated
 import typer
 from pydantic import RootModel
 
+from flymy_comfyui_repo_gen.core.code_gen.Infer.InferGenerator import InferGenerator
+from flymy_comfyui_repo_gen.core.code_gen.Model.ModelGenerator import ModelGenerator
 from flymy_comfyui_repo_gen.core.code_gen.Types.TypesGenerator import TypesGenerator
 from flymy_comfyui_repo_gen.core.workflow_edit import WorkflowEditor
 from flymy_comfyui_repo_gen.schemas.RepoGeneratorConfig import RepoGeneratorConfig
@@ -26,6 +28,18 @@ def generate_repository(
         )
         tasks["Types.py"] = tpe.submit(
             TypesGenerator(
+                repo_config=fma_api,
+                repo_name=repo_name
+            ).generate
+        )
+        tasks["model.py"] = tpe.submit(
+            ModelGenerator(
+                repo_config=fma_api,
+                repo_name=repo_name
+            ).generate
+        )
+        tasks["infer.py"] = tpe.submit(
+            InferGenerator(
                 repo_config=fma_api,
                 repo_name=repo_name
             ).generate

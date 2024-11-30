@@ -1,18 +1,30 @@
 import dataclasses
 import copy
+import base64
+import numpy as np
 
 
 @dataclasses.dataclass
 class {{ config.repo_name }}Input:
-    {% for field in config.repo_settings.fields %}
-    {{ field.python_name }}: {{ field.python_type.__name__ }}
+    {% for field in config.repo_settings.fields -%}
+    {{ field.python_name }}: {{ field.python_type_signature_analyzed }}
     {% endfor %}
 
     {% for node in config.nodes %}
     def to_{{ node.name }}(self) -> dict:
+        {% if node.is_image_input() -%}
+        tensor = getattr(self, "{{ node.transformed_image_input_field.python_name }}")
+        b64_tensor = base64.b64encode(
+            np.ascontiguousarray(tensor)
+        ).decode()
+        return {"image_b64": b64_tensor, "image_size": tuple(tensor.shape)}
+        {% else %}
         return {
-            {% for node_field in node.fields %}"{{ node_field.comfy_name }}": getattr(self, "{{ node_field.python_name }}"),{% endfor %}
+            {% for node_field in node.fields -%}
+            "{{ node_field.comfy_name }}": getattr(self, "{{ node_field.python_name }}"),
+            {%- endfor %}
         }
+        {%- endif %}
     {% endfor %}
 
     def export_to_workflow(self, workflow: dict):
