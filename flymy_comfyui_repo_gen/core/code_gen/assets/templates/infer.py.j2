@@ -16,8 +16,7 @@ def load_image(path):
     if read_image.shape[-1] == 4:
         read_image = read_image[:, :, :3]
     image = np.transpose(np.ascontiguousarray(np.array([read_image])), (0, 3, 1, 2))
-    encoded = base64.b64encode(np.ascontiguousarray(image))
-    return encoded
+    return image
 
 
 class {{ config.repo_name }}SimpleModel({{ config.repo_name }}Model):
