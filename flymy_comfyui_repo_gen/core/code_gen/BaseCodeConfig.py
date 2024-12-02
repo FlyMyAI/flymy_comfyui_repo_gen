@@ -1,8 +1,8 @@
 from typing import Annotated
 
-from pydantic import BaseModel, BeforeValidator, AfterValidator
+from pydantic import BaseModel, BeforeValidator, AfterValidator, Field
 
-from flymy_comfyui_repo_gen.core.utils import normalize_u, to_pascal_case
+from flymy_comfyui_repo_gen.core.utils import normalize_u, to_pascal_case, to_snake_case
 from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.Node import NodeSchema
 from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.NodeField import NodeField
 from flymy_comfyui_repo_gen.schemas.FMARepoConfig import FMARepoConfig
@@ -11,6 +11,12 @@ from flymy_comfyui_repo_gen.schemas.FMARepoConfig import FMARepoConfig
 class BaseCodeConfig(BaseModel):
     repo_name: Annotated[str, BeforeValidator(normalize_u), AfterValidator(to_pascal_case)]
     repo_settings: FMARepoConfig
+
+    root_src_pypackage: Annotated[
+        str, Field(alias="repo_name"),
+        BeforeValidator(normalize_u),
+        AfterValidator(to_snake_case)
+    ]
 
     @property
     def nodes(self):

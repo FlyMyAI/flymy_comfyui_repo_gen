@@ -25,3 +25,10 @@ def replace_symbols_with_underscore(text):
 def to_pascal_case(string: str) -> str:
     components = string.split('_')
     return ''.join(x.title() for x in components)
+
+
+def to_snake_case(string: str) -> str:
+    string = re.sub(r'\s+', ' ', string.strip())
+    string = re.sub(r'(?<=[a-zA-Z0-9])([A-Z])', r'_\1', string)
+    string = re.sub(r'[^a-zA-Z0-9_]', '_', string)
+    return string.lower()

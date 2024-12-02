@@ -6,8 +6,8 @@ import time
 import numpy as np
 import cv2
 
-from .model import {{ config.repo_name }}Model
-from .Types import {{ config.repo_name }}Input
+from {{ config.root_src_pypackage }}.model import {{ config.repo_name }}Model
+from {{ config.root_src_pypackage }}.Types import {{ config.repo_name }}Input
 
 
 def load_image(path):

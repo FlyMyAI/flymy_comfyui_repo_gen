@@ -12,7 +12,7 @@ from flymyai_comfy_engine.ResultCollection.{{ schema_analog }} import {{ schema_
 from flymyai_comfy_engine.triton_model import TritonComfyCPN
 from flymyai_comfy_engine.installer import install_pipeline_from_git, install_pipeline, setup
 
-from .Types import {{ config.repo_name }}Input
+from {{ config.root_src_pypackage }}.Types import {{ config.repo_name }}Input
 
 
 class {{ config.repo_name }}Model(TritonComfyCPN):
