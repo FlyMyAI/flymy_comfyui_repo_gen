@@ -1,10 +1,15 @@
-from pydantic import BaseModel, SecretStr, HttpUrl
+from typing import Annotated
+
+from pydantic import BaseModel, SecretStr, HttpUrl, BeforeValidator
 
 
 class ComfyRepositorySchema(BaseModel):
     token: SecretStr | None = None
     manager_capable_name: str | None = None
-    url: HttpUrl | None = None
+    url: Annotated[
+        HttpUrl | None,
+        BeforeValidator(lambda x: str(x).removesuffix(".git") + ".git")
+    ] = None
 
     @property
     def authorized_git_url(self):
