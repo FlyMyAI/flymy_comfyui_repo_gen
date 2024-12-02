@@ -46,7 +46,6 @@ def generate_repository(
             ).generate
         )
         tasks["__init__.py"] = ""
-        tasks["README.md"] = ""
         awaited = {}
         for file_p, text_or_future in tasks.items():
             text = text_or_future
@@ -61,7 +60,8 @@ def generate_repository(
                 "pyproject.toml": PyprojectGenerator(
                     repo_config=fma_api,
                     repo_name=repo_name
-                ).generate()
+                ).generate(),
+                "README.md": ""
             }
         )
         result_repo.save()
