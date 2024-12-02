@@ -23,7 +23,7 @@ class {{ config.repo_name }}Model(TritonComfyCPN):
                 {{ schema_analog }},
                 # accepts 1 arg (comfy node result), returns dict
                 # the output must be {{ schema_analog }}.Schema compatible
-                {{ schema_analog }}.extract_{{ node.node_type }}
+                dict(extractor={{ schema_analog }}.extract_{{ node.node_type }})
             ),
             {% endfor %}
         }
