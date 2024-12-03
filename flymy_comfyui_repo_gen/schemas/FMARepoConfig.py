@@ -2,7 +2,9 @@ from pydantic import BaseModel, computed_field, PrivateAttr, field_validator
 
 from flymy_comfyui_repo_gen.core.exceptions import FieldNotFoundError
 from flymy_comfyui_repo_gen.schemas.ComfyRepository import ComfyRepositorySchema
-from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.FlyMyComfyUI import FlyMyComfyUINodeSchema
+from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.FlyMyComfyUI import (
+    FlyMyComfyUINodeSchema,
+)
 from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.Node import NodeSchema
 from flymy_comfyui_repo_gen.schemas.ComfyUISchemas.NodeField import NodeField
 from flymy_comfyui_repo_gen.schemas.RepoGeneratorConfig import RepoGeneratorConfig
@@ -31,10 +33,12 @@ class FMARepoConfig(BaseModel):
                     for idx, probable_comfy_ptr in enumerate(input_v):
                         if not isinstance(probable_comfy_ptr, str):
                             continue
-                        some_result = list(filter(
-                            lambda x: _find_match(x) == probable_comfy_ptr,
-                            value.keys()
-                        ))
+                        some_result = list(
+                            filter(
+                                lambda x: _find_match(x) == probable_comfy_ptr,
+                                value.keys(),
+                            )
+                        )
                         if some_result:
                             value[k].inputs[input_k][idx] = some_result[0]
         return value
@@ -51,19 +55,22 @@ class FMARepoConfig(BaseModel):
             field_name = parts[2]
 
             try:
-                parent_node_name: str = next(filter(
-                    lambda node_name:
-                    _find_match(node_name) == search_id,
-                    self.edited_comfy_workflow.keys()
-                ))
+                parent_node_name: str = next(
+                    filter(
+                        lambda node_name: _find_match(node_name) == search_id,
+                        self.edited_comfy_workflow.keys(),
+                    )
+                )
                 parent_node = self.edited_comfy_workflow[parent_node_name]
-                fields.append(NodeField(
-                    python_type=type(parent_node.inputs[field_name]),
-                    python_name=f"{parent_node_name}_{field_name}",
-                    comfy_name=field_name,
-                    default_value=parent_node.inputs[field_name],
-                    node_name=parent_node_name
-                ))
+                fields.append(
+                    NodeField(
+                        python_type=type(parent_node.inputs[field_name]),
+                        python_name=f"{parent_node_name}_{field_name}",
+                        comfy_name=field_name,
+                        default_value=parent_node.inputs[field_name],
+                        node_name=parent_node_name,
+                    )
+                )
             except StopIteration as e:
                 raise FieldNotFoundError(f"Field {field_p} not found") from e
         self._fields = fields
@@ -77,13 +84,10 @@ class FMARepoConfig(BaseModel):
     def output_nodes(self):
         return [
             NodeSchema(
-                fields=[],  # it is not used
-                name=name,
-                node_type=args.class_type
+                fields=[], name=name, node_type=args.class_type  # it is not used
             )
             for name, args in filter(
                 lambda x: x[1].class_type in OUTPUT_NODE_CLASSES_MAP,
-                self.edited_comfy_workflow.items()
+                self.edited_comfy_workflow.items(),
             )
         ]
-

@@ -16,19 +16,19 @@ def normalize_u(string):
 
 def replace_symbols_with_underscore(text):
     # Regex pattern: match any character that is not a letter or digit
-    pattern = r'[^a-zA-Z0-9]'
+    pattern = r"[^a-zA-Z0-9]"
     # Replace all matched characters with an underscore
-    result = re.sub(pattern, '_', text)
+    result = re.sub(pattern, "_", text)
     return result
 
 
 def to_pascal_case(string: str) -> str:
-    components = string.split('_')
-    return ''.join(x.title() for x in components)
+    components = string.split("_")
+    return "".join(x.title() for x in components)
 
 
 def to_snake_case(string: str) -> str:
-    string = re.sub(r'\s+', ' ', string.strip())
-    string = re.sub(r'(?<=[a-zA-Z0-9])([A-Z])', r'_\1', string)
-    string = re.sub(r'[^a-zA-Z0-9_]', '_', string)
+    string = re.sub(r"\s+", " ", string.strip())
+    string = re.sub(r"(?<=[a-zA-Z0-9])([A-Z])", r"_\1", string)
+    string = re.sub(r"[^a-zA-Z0-9_]", "_", string)
     return string.lower()

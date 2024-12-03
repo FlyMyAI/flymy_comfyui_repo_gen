@@ -19,8 +19,4 @@ class FlyMyComfyUINodeSchema(BaseNode):
     @classmethod
     def from_comfy(cls, comfy_node: ComfyNodeSchema):
         node_cls = comfy_node.flymyai_node_type
-        return cls(
-            class_type=node_cls,
-            meta=comfy_node.meta,
-            inputs=comfy_node.inputs
-        )
+        return cls(class_type=node_cls, meta=comfy_node.meta, inputs=comfy_node.inputs)

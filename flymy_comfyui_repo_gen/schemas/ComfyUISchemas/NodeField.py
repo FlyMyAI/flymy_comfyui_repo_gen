@@ -17,7 +17,10 @@ class NodeField(BaseModel):
 
     def is_transformed_image_input(self):
         for t in COMFY_IMAGE_INPUT_MAPS:
-            if self.node_name.startswith(t) and COMFY_IMAGE_INPUT_MAPS[t] == self.comfy_name:
+            if (
+                self.node_name.startswith(t)
+                and COMFY_IMAGE_INPUT_MAPS[t] == self.comfy_name
+            ):
                 return True
         return False
 

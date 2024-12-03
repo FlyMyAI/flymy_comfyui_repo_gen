@@ -9,13 +9,16 @@ from flymy_comfyui_repo_gen.schemas.FMARepoConfig import FMARepoConfig
 
 
 class BaseCodeConfig(BaseModel):
-    repo_name: Annotated[str, BeforeValidator(normalize_u), AfterValidator(to_pascal_case)]
+    repo_name: Annotated[
+        str, BeforeValidator(normalize_u), AfterValidator(to_pascal_case)
+    ]
     repo_settings: FMARepoConfig
 
     root_src_pypackage: Annotated[
-        str, Field(alias="repo_name"),
+        str,
+        Field(alias="repo_name"),
         BeforeValidator(normalize_u),
-        AfterValidator(to_snake_case)
+        AfterValidator(to_snake_case),
     ]
 
     @property
@@ -27,7 +30,9 @@ class BaseCodeConfig(BaseModel):
             NodeSchema(
                 name=node_name,
                 fields=(list(filter(lambda f: f.node_name == node_name, node_fields))),
-                node_type=self.repo_settings.edited_comfy_workflow[node_name].class_type
+                node_type=self.repo_settings.edited_comfy_workflow[
+                    node_name
+                ].class_type,
             )
             for node_name in node_names
         ]

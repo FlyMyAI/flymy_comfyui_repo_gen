@@ -8,7 +8,6 @@ class ModelGenerator(CodeGenerator):
     @property
     def config(self):
         config_map = ModelConfig(
-            repo_name=self._repo_name,
-            repo_settings=self._repo_config
+            repo_name=self._repo_name, repo_settings=self._repo_config
         )
         return config_map

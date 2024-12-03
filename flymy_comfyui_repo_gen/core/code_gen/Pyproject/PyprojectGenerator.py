@@ -1,5 +1,7 @@
 from flymy_comfyui_repo_gen.core.code_gen.CodeGenerator import CodeGenerator
-from flymy_comfyui_repo_gen.core.code_gen.Pyproject.PyprojectConfig import PyprojectConfig
+from flymy_comfyui_repo_gen.core.code_gen.Pyproject.PyprojectConfig import (
+    PyprojectConfig,
+)
 
 
 class PyprojectGenerator(CodeGenerator):
@@ -8,7 +10,6 @@ class PyprojectGenerator(CodeGenerator):
     @property
     def config(self):
         config_map = PyprojectConfig(
-            repo_name=self._repo_name,
-            repo_settings=self._repo_config
+            repo_name=self._repo_name, repo_settings=self._repo_config
         )
         return config_map

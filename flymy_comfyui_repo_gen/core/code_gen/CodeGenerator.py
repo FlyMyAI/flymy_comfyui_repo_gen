@@ -15,9 +15,7 @@ class AbstractCodeGenerator(ABC):
 
     def generate(self) -> str:
         jinja_template = j2_environ.get_template(self.template_name)
-        return jinja_template.render(
-            config=self.config
-        )
+        return jinja_template.render(config=self.config)
 
 
 class CodeGenerator(AbstractCodeGenerator, ABC):
