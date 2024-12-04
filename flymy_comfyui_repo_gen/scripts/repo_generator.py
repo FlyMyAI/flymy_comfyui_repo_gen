@@ -86,6 +86,6 @@ def generate_repository_entry(
     ] = (PROJECT_PATH.parent / "playground" / "result"),
     repo_name: Annotated[
         str, typer.Option(prompt="Enter repository name")
-    ] = "my_comfyui_repo",
+    ] = "flymy_comfyui_repo",
 ):
     generate_repository(json_path, output_dir, repo_name)
