@@ -101,7 +101,7 @@ def generate_resolution_repositories(
                 )
             case ComfyRepositoryInstallationVariants.COMFY_MANAGER:
                 repos.append(
-                    ComfyRepositorySchema(
+                    InputComfyRepositorySchema(
                         manager_capable_name=restrict_empty(
                             "Enter the title of the node that is corresponding to ComfyUI-Manager "
                             "(checkout https://github.com/ltdrdata/ComfyUI-Manager/blob/main/custom-node-list.json)",

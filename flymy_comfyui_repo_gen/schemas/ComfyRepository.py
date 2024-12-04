@@ -21,4 +21,4 @@ class ComfyRepositorySchema(BaseModel):
 class InputComfyRepositorySchema(ComfyRepositorySchema):
     token: Annotated[str | None, BeforeValidator(lambda x: x or None)] = None
     manager_capable_name: str | None = None
-    url: HttpUrl | None
+    url: HttpUrl | None = None
