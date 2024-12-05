@@ -94,7 +94,7 @@ def generate_resolution_repositories(
                 repos.append(
                     InputComfyRepositorySchema(
                         token=request_input_callback(
-                            "Auth token for git (not visible)", str, "", None, True
+                            "Auth token (hidden, for private repos only)", str, "", None, True
                         ),
                         url=restrict_empty("Repository url", HttpUrl, None, None),
                     )
