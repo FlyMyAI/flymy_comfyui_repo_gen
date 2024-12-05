@@ -7,7 +7,8 @@ class ComfyRepositorySchema(BaseModel):
     token: SecretStr | None = None
     manager_capable_name: str | None = None
     url: Annotated[
-        HttpUrl | None, BeforeValidator(lambda x: str(x).removesuffix(".git") + ".git")
+        HttpUrl | None,
+        BeforeValidator(lambda x: str(x).removesuffix(".git") + ".git" if x else None),
     ] = None
 
     @property
