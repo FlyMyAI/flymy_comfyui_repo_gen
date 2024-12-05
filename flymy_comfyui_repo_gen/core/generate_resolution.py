@@ -39,12 +39,16 @@ def generate_resolution_inputs(
         if any(
             map(lambda x: not isinstance(x, list), v.inputs.values())
         ) and request_input_callback(
-            f"Include anything {k} in input schema", YesOrNo, YesOrNo.YES, None, False
+            f'\nDo any fields from node "{k}" need to be added?',
+            YesOrNo,
+            YesOrNo.YES,
+            None,
+            False,
         ):
             for input_k, input_v in v.inputs.items():
                 result_schema_name = f"{k}.inputs.{input_k}"
                 if not isinstance(input_v, list) and request_input_callback(
-                    f"Include '{result_schema_name}' in input schema",
+                    f"Include '{result_schema_name}' field into the input schema?",
                     YesOrNo,
                     YesOrNo.YES,
                     None,
@@ -89,15 +93,17 @@ def generate_resolution_repositories(
             case ComfyRepositoryInstallationVariants.GIT:
                 repos.append(
                     InputComfyRepositorySchema(
-                        token=request_input_callback("Auth token", str, "", None, True),
+                        token=request_input_callback(
+                            "Auth token (invisible input, required for private repos)", str, "", None, True
+                        ),
                         url=restrict_empty("Repository url", HttpUrl, None, None),
                     )
                 )
             case ComfyRepositoryInstallationVariants.COMFY_MANAGER:
                 repos.append(
-                    ComfyRepositorySchema(
+                    InputComfyRepositorySchema(
                         manager_capable_name=restrict_empty(
-                            "ComfyUI-Manager capable name "
+                            "Enter the title of the node that is corresponding to ComfyUI-Manager "
                             "(checkout https://github.com/ltdrdata/ComfyUI-Manager/blob/main/custom-node-list.json)",
                             str,
                             None,
@@ -106,5 +112,4 @@ def generate_resolution_repositories(
                         )
                     )
                 )
-
     return repos
