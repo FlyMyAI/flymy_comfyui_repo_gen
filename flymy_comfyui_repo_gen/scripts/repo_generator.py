@@ -8,7 +8,7 @@ from typer import Typer
 from flymy_comfyui_repo_gen.core.generate_repository import generate_repository
 from flymy_comfyui_repo_gen.core.generate_resolution import (
     generate_resolution_inputs,
-    generate_resolution_repositories,
+    generate_resolution_repositories, generate_extra_file_list,
 )
 from flymy_comfyui_repo_gen.schemas.RepoGeneratorConfig import (
     DumpRepoGeneratorConfig,
@@ -63,12 +63,21 @@ def process_workflow_api(
             show_default=True,
         ),
     )
+    extra_files = generate_extra_file_list(
+        default_prompt,
+        obtain_done_flag_callback=lambda: typer.confirm(
+            "\nDoes your ComfyUI pipeline requires any files not previously specified?",
+            default=None,
+            show_default=True,
+        ),
+    )
     output_path.parent.mkdir(exist_ok=True, parents=True)
     output_path.write_text(
         DumpRepoGeneratorConfig(
             comfy_workflow=json.loads(workflow_api_json),
             input_field_paths=inputs,
             comfy_repositories=repositories,
+            extra_files=extra_files,
         ).model_dump_json(indent=4)
     )
 

@@ -14,6 +14,44 @@ from flymyai_comfy_engine.installer import install_pipeline_from_git, install_pi
 
 from {{ config.root_src_pypackage }}.Types import {{ config.repo_name }}Input
 
+from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor
+
+import requests
+
+import ComfyUI
+
+
+def download_model(file_path, model_url):
+        print(f'Loader: Downloading model {model_url=} {file_path=}...')
+        if file_path.exists():
+            print(f"{file_path}.exists() - true")
+            return
+        response = requests.get(model_url, stream=True)
+        pathlib.Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+        try:
+            if response.status_code == 200:
+                total_size = int(response.headers.get('content-length', 0))
+                block_size = 1024  # 1 Kibibyte
+                # tqdm will display a progress bar
+                with open(file_path, 'wb') as file, tqdm(
+                        desc=f'Downloading {file_path}',
+                        total=total_size,
+                        unit='iB',
+                        unit_scale=True,
+                        unit_divisor=1024,
+                ) as bar:
+                    for data in response.iter_content(block_size):
+                        bar.update(len(data))
+                        file.write(data)
+
+        except requests.exceptions.RequestException as err:
+            print('Loader: Model download failed: {err}')
+            print(f'Loader: Download it manually from: {model_url}')
+            print(f'Loader: And put it in {file_path}')
+        except Exception as e:
+            print(f'Loader: An unexpected error occurred: {e}')
+
 
 class {{ config.repo_name }}Model(TritonComfyCPN):
     collect_result_schema = CollectionSchema(
@@ -36,6 +74,28 @@ class {{ config.repo_name }}Model(TritonComfyCPN):
         :return: None
         """
         setup()  # initialize ComfyUI-Manager or git puller
+        comfy_path = pathlib.Path(ComfyUI.__file__).parent
+
+        file_map = {
+            {% for file_schema in config.repo_settings.initial_config.extra_files %}
+            "{{ file_schema.pull_uri }}":
+                {% if file_schema.comfy_relative -%}
+                comfy_path / "{{ file_schema.file_path | remove_prefix("ComfyUI/") }}"
+                {% else %}
+                {{ file_schema.file_path }}
+                {% endif %}
+            {% endfor %}
+        }
+        if file_map:
+            tasks = []
+            with ThreadPoolExecutor(len(file_map)) as tpe:
+                for k, v in file_map.items():
+                        tasks.append(tpe.submit(
+                            download_model, v, k
+                        ))
+                for t in tasks:
+                    t.result()
+
         {% for repository in config.repo_settings.comfy_repositories %}
         {% if repository.manager_capable_name %}
         install_pipeline("{{ repository.manager_capable_name }}")

@@ -66,6 +66,18 @@ You'll be prompted for input:
 | `Auth token (invisible input, required for private repos) []:`  Enter the auth token for git access.                                                                                | `Enter the title of the node that corresponds to ComfyUI-Manager (checkout https://github.com/ltdrdata/ComfyUI-Manager/blob/main/custom-node-list.json):` Enter the ComfyUI-Manager name of the custom node repository. |
 | `Repository url: `  Enter the HTTP/HTTPS URL (NOT SSH!) for the custom node repository. Check out our ComfyUI custom nodes [guide](https://github.com/FlyMyAI/ComfyUI-ExampleNode). |                                                                                                                                                                                                                         |
 
+8. `Does your ComfyUI pipeline requires any files not previously specified? [y/n]: `
+    Input `y` if you need to add custom file to the Comfy pipeline.
+
+9. `Enter the file http url:`
+    Input the HTTP url of file. The file will be pulled with http get request.
+
+10. `Enter the save path (START WITH ComfyUI/, if the file needs to be saved inside comfy):`
+
+    Input path for file to save. If you need to save the file somewhere inside the ComfyUI's folder - start with `ComfyUI/` prefix,
+    for example: `ComfyUI/models/checkpoints/DreamShaperXL_Lightning.safetensors`
+    
+
 ## Step 2: Generate the Repository
 
 After creating the configuration file, generate the repository structure:
