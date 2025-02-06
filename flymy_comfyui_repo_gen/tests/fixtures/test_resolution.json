@@ -107,5 +107,12 @@
           "token": "some_token2",
           "manager_capable_name": "ComfyUI-Florence2"
       }
+  ],
+  "extra_files": [
+        {
+            "pull_uri": "https://huggingface.co/Lykon/dreamshaper-xl-lightning/resolve/main/DreamShaperXL_Lightning.safetensors",
+            "file_path": "ComfyUI/models/checkpoints/DreamShaperXL_Lightning.safetensors",
+            "comfy_relative": true
+        }
   ]
 }
