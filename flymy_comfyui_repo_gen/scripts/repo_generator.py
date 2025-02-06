@@ -8,7 +8,8 @@ from typer import Typer
 from flymy_comfyui_repo_gen.core.generate_repository import generate_repository
 from flymy_comfyui_repo_gen.core.generate_resolution import (
     generate_resolution_inputs,
-    generate_resolution_repositories, generate_extra_file_list,
+    generate_resolution_repositories,
+    generate_extra_file_list,
 )
 from flymy_comfyui_repo_gen.schemas.RepoGeneratorConfig import (
     DumpRepoGeneratorConfig,
